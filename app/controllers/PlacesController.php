@@ -7,13 +7,17 @@ class PlacesController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function index()
+	public function index($visited = null)
 	{
-		$places = Place::all();
+		if($visited == "visited")
+			$places = Place::whereVisited(true)->get();
+		elseif($visited == "unvisited")
+			$places = Place::whereVisited(false)->get();
+		else
+			$places = Place::all();
 
-		return View::make('places.table', compact($places));
+		return View::make('places.table', compact('places'));
 	}
-
 
 	/**
 	 * Show the form for creating a new resource.
@@ -33,7 +37,12 @@ class PlacesController extends \BaseController {
 	 */
 	public function store()
 	{
-		//
+		$input = Input::all();
+		$input['user_id'] = Auth::user()->id;
+		
+		Place::create($input);
+
+		return Redirect::route('places.index');
 	}
 
 
