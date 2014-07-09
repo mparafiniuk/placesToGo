@@ -7,14 +7,16 @@ class PlacesController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function index($visited = null)
+	public function index($filter = null)
 	{
-		if($visited == "visited")
-			$places = Place::whereVisited(true)->get();
-		elseif($visited == "unvisited")
-			$places = Place::whereVisited(false)->get();
+		if($filter == "visited")
+			$places = Place::whereVisited(true)->orderBy('name', 'ASC')->get();
+		elseif($filter == "unvisited")
+			$places = Place::whereVisited(false)->orderBy('name', 'ASC')->get();
+		elseif($filter == "my") 
+			$places = Place::whereUser_id(Auth::user()->id)->orderBy('name', 'ASC')->get();
 		else
-			$places = Place::all();
+			$places = Place::orderBy('name', 'ASC')->get();
 
 		return View::make('places.table', compact('places'));
 	}
@@ -39,7 +41,7 @@ class PlacesController extends \BaseController {
 	{
 		$input = Input::all();
 		$input['user_id'] = Auth::user()->id;
-		
+
 		Place::create($input);
 
 		return Redirect::route('places.index');
@@ -66,9 +68,8 @@ class PlacesController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-		//
+		
 	}
-
 
 	/**
 	 * Update the specified resource in storage.
@@ -78,7 +79,14 @@ class PlacesController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		//
+		Input::merge(array_map('trim', Input::all()));
+		$input = Input::all();
+
+		$editedPlace = Place::find($id);
+		$editedPlace->fill($input);
+		$editedPlace->save();
+		
+		return Redirect::route('places.index');
 	}
 
 
@@ -90,7 +98,10 @@ class PlacesController extends \BaseController {
 	 */
 	public function destroy($id)
 	{
-		//
+		$deletedPlace = Place::find($id);
+		$deletedPlace->delete();
+
+		return Redirect::route('places.index');
 	}
 
 

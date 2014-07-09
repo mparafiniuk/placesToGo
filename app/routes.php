@@ -15,6 +15,8 @@ Route::get('/', ['as' => 'login.index', 'uses' => 'AuthController@index']);
 
 Route::post('/login', ['as' => 'login.doLogin', 'uses' => 'AuthController@doLogin']);
 
-Route::get('places/{visited}', 'PlacesController@index');
+Route::get('places/map', 'MapController@index');
+
+Route::get('places/{filter}', 'PlacesController@index');
 
 Route::resource('places', 'PlacesController');

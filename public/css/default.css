@@ -1,3 +1,18 @@
-.table {
-    word-wrap: break-word;
+body {
+	font-family: Georgia;
 }
+
+#googleMap {
+	height: 600px;
+}
+
+.table {
+	table-layout: fixed;
+    word-wrap: break-word;
+
+    width: 100%;
+}
+
+.last {
+ 	width: 60px;
+} 

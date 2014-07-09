@@ -1,7 +1,9 @@
 @extends('layouts.default')
 
-@section('table')
+@section('body')
 	<table class="table">
+		<col span="4">
+		<col span="1" class="last">
 		<thead>
 			<th>Nazwa</th>
 			<th>Adres</th>
@@ -10,25 +12,27 @@
 			<th></th>
 		</thead>
 		<tbody>
-			@foreach($places as $place)
-			<tr @if($place->visited) class='success' @endif>
-				<td> {{ $place->name }} </td>
-				<td> {{ $place->address }} </td>
-				<td> {{ str_replace("\n","<br />",$place->info) }} </td>
-				<td> {{ $place->link }} </td>
-				<td>
-					<span class="glyphicon glyphicon-pencil"></span>
-					<span class="glyphicon glyphicon-remove"></span>
-				</td>
-			</tr>
-			@endforeach
+			@if ($places)
+				@foreach($places as $place)
+					<tr id="place-{{ $place->id }}" {{ ($place->visited)?"class='success'":"" }}>
+						<td class="table-cell" id="place-name-{{ $place->id }}"> {{ $place->name }} </td>
+						<td class="table-cell" id="place-address-{{ $place->id }}"> {{ $place->address }} </td>
+						<td class="table-cell" id="place-info-{{ $place->id }}"> {{ str_replace("\n","<br />",$place->info) }} </td>
+						<td class="table-cell" id="place-link-{{ $place->id }}"> {{ link_to($place->link, $place->link) }}</td> 
+						<td class="table-cell" id="place-actions">
+							<a id="toogle-edit-modal" href="#modalEdit" data-toggle="modal" data-id="{{ $place->id }}"><span class='glyphicon glyphicon-pencil'></span></a>
+							<a id="toogle-delete-modal" href="#modalDelete" data-toggle="modal" data-id="{{ $place->id }}"><span class='glyphicon glyphicon-remove'></span></a>
+						</td>
+					</tr>
+				@endforeach 
+			@endif
 		</tbody>
 	</table>
 @stop
 
 @section('right-panel')
 	<h3>Dodaj nowe miejsce</h3>
-	{{ Form::open(['url' => 'places', 'class' => 'form']) }}
+ 	{{ Form::open(['url' => 'places', 'class' => 'form']) }}
 		<div class="form-group">
 			{{ Form::label('name', 'Nazwa') }}
 			{{ Form::text('name', null, ['class' => 'form-control']) }}
@@ -51,3 +55,4 @@
 
 	{{ Form::close() }}
 @stop
+
